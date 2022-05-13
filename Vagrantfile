@@ -1,5 +1,5 @@
-podman_ip = "192.168.56.3"
 Vagrant.configure("2") do |config|
+  $podman_ip = "192.168.56.3"
 
   config.vm.define "w10" do |w10|
 
