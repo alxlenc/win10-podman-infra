@@ -1,3 +1,4 @@
+podman_ip = "192.168.56.3"
 Vagrant.configure("2") do |config|
 
   config.vm.define "w10" do |w10|
@@ -31,6 +32,13 @@ Vagrant.configure("2") do |config|
     end
 
     # w10.vm.provision "shell", inline: "Set-WinUserLanguageList es-ES -Force"
+    w10.vm.provision "file", source: ".vagrant/machines/f36/virtualbox/private_key", destination: "%HOMEPATH%\\.ssh\\id_rsa"
+    w10.vm.provision "shell", path: "scripts/windows/install-podman.ps1"
+    w10.vm.provision :shell do |sh|
+      sh.inline = "podman system connection add vagrant --identity c:\Users\ieuser\.ssh\id_rsa ssh://vagrant@" + $podman_ip + "/run/user/1000/podman/podman.sock"
+      sh.inline = "podman --remote info"
+      sh.inline = "choco install python -y"
+    end
 
   end
 
@@ -40,7 +48,7 @@ Vagrant.configure("2") do |config|
     f36.vm.box_version = "36-20220504.1"
     f36.vm.hostname = "podman-vm"
 
-    f36.vm.network "private_network", ip: "192.168.56.3"
+    f36.vm.network "private_network", ip: $podman_ip
 
     f36.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: true
 
