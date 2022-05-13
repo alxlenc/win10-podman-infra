@@ -42,6 +42,8 @@ Vagrant.configure("2") do |config|
 
     f36.vm.network "private_network", ip: "192.168.56.3"
 
+    f36.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: true
+
     f36.vm.provider "virtualbox" do |v|
       v.memory = 2048
       v.cpus = 3
