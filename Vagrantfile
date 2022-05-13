@@ -30,8 +30,8 @@ Vagrant.configure("2") do |config|
   		v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     end
 
+    # w10.vm.provision "shell", inline: "Set-WinUserLanguageList es-ES -Force"
 
-    w10.vm.provision "shell", inline: "Set-WinUserLanguageList es-ES -Force"
   end
 
   config.vm.define "f36" do |f36|
@@ -48,6 +48,9 @@ Vagrant.configure("2") do |config|
       v.memory = 2048
       v.cpus = 3
     end
+
+    f36.vm.provision "shell", path: "scripts/fedora/setup.sh"
+
   end
 
 end
