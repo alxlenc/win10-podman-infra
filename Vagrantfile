@@ -1,6 +1,32 @@
 Vagrant.configure("2") do |config|
   $podman_ip = "192.168.56.3"
 
+
+  config.vm.define "f36" do |f36|
+
+    f36.vm.box = "fedora/36-cloud-base"
+    f36.vm.box_version = "36-20220504.1"
+    f36.vm.hostname = "podman-vm"
+
+    # ONLY Creates the addition interface. Configuration at provisioning
+    f36.vm.network "private_network", ip: $podman_ip
+
+    # Disable parent Vagrantfile sync folder
+    f36.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: true
+
+    f36.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 3
+      v.customize ["modifyvm", :id, "--vram", "30"]
+    end
+    # Needed for fedora cloud
+    f36.vm.provision "shell", inline: "nmcli con mod 'Wired connection 2' ipv4.method manual ipv4.address "+ $podman_ip +"/24"
+    f36.vm.provision "shell", reboot: true
+    f36.vm.provision "shell", path: "scripts/fedora/setup.sh"
+
+  end
+
+
   config.vm.define "w10" do |w10|
 
     w10.vm.box = "win10"
@@ -32,32 +58,14 @@ Vagrant.configure("2") do |config|
     end
 
     # w10.vm.provision "shell", inline: "Set-WinUserLanguageList es-ES -Force"
-    w10.vm.provision "file", source: ".vagrant/machines/f36/virtualbox/private_key", destination: "%HOMEPATH%\\.ssh\\id_rsa"
+    w10.vm.provision "file", source: ".vagrant/machines/f36/virtualbox/private_key", destination: "c:\\Users\\IEUser\\.ssh\\id_rsa"
     w10.vm.provision "shell", path: "scripts/windows/install-podman.ps1"
+    
     w10.vm.provision :shell do |sh|
-      sh.inline = "podman system connection add vagrant --identity c:\Users\ieuser\.ssh\id_rsa ssh://vagrant@" + $podman_ip + "/run/user/1000/podman/podman.sock"
-      sh.inline = "podman --remote info"
-      sh.inline = "choco install python -y"
+      sh.inline = "podman system connection add vagrant --identity c:\\Users\\IEUser\\.ssh\\id_rsa ssh://vagrant@" + $podman_ip + "/run/user/1000/podman/podman.sock"
     end
-
-  end
-
-  config.vm.define "f36" do |f36|
-
-    f36.vm.box = "fedora/36-cloud-base"
-    f36.vm.box_version = "36-20220504.1"
-    f36.vm.hostname = "podman-vm"
-
-    f36.vm.network "private_network", ip: $podman_ip
-
-    f36.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: true
-
-    f36.vm.provider "virtualbox" do |v|
-      v.memory = 2048
-      v.cpus = 3
-    end
-
-    f36.vm.provision "shell", path: "scripts/fedora/setup.sh"
+    w10.vm.provision "shell", inline: "podman --remote info"
+    w10.vm.provision "shell", inline: "choco install python -y"
 
   end
 
