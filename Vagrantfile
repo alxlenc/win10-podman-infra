@@ -50,8 +50,8 @@ Vagrant.configure("2") do |config|
     w10.vm.network "private_network", ip: "192.168.56.2"
 
     w10.vm.provider "virtualbox" do |v|
-      v.memory = 4096
-      v.cpus = 3
+      v.memory = 5096
+      v.cpus = 4
       v.gui = true
       v.customize ["modifyvm", :id, "--vram", "128"]
   		v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
@@ -65,7 +65,9 @@ Vagrant.configure("2") do |config|
       sh.inline = "podman system connection add vagrant --identity c:\\Users\\IEUser\\.ssh\\id_rsa ssh://vagrant@" + $podman_ip + "/run/user/1000/podman/podman.sock"
     end
     w10.vm.provision "shell", inline: "podman --remote info"
-    w10.vm.provision "shell", inline: "choco install python -y"
+    w10.vm.provision "shell", inline: "choco upgrade all -y"
+    w10.vm.provision "shell", reboot: true
+    w10.vm.provision "shell", inline: "choco install python --version=3.9.7 -y"
 
   end
 
