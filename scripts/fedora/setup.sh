@@ -7,6 +7,7 @@ dnf install podman cifs-utils -y
 chown -R $user /mnt
 su -c "mkdir -p /mnt/c/Users/IEUser" $user
 echo "//192.168.56.2/IEUser  /mnt/c/Users/IEUser  cifs  username=IEUser,password=Passw0rd!,rw,uid=1000 0 0" >> /etc/fstab
+systemctl daemon-reload
 
 echo -e "\nEnabling remote rootles containers for user $user..."
 su -c "systemctl --user enable --now podman.socket" $user

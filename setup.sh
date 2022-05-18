@@ -18,7 +18,6 @@ echo -e "\nProvisioning environment. Be patient, this might take up to 1 hour.\n
 sleep 3
 vagrant up
 
-
 vagrant ssh f36 -c "sudo mount -a"
 echo "Done."
 
