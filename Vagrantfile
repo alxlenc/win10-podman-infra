@@ -58,11 +58,11 @@ Vagrant.configure("2") do |config|
     end
 
     # w10.vm.provision "shell", inline: "Set-WinUserLanguageList es-ES -Force"
+    # Create share to mount on podman vm
+    w10.vm.provision "shell", inline: "New-SmbShare -Name IEUser -Path 'C:\\Users\\IEUser\\' -FullAccess 'msedgewin10\\ieuser'"
     w10.vm.provision "file", source: ".vagrant/machines/f36/virtualbox/private_key", destination: "c:\\Users\\IEUser\\.ssh\\id_rsa"
     w10.vm.provision "shell", path: "scripts/windows/install-podman.ps1"
 
-    # Create share to mount on podman vm
-    w10.vm.provision "shell", inline: "New-SmbShare -Name IEUser -Path 'C:\\Users\\IEUser\\' -Full\ieuser'"
 
     w10.vm.provision :shell do |sh|
       sh.inline = "podman system connection add vagrant --identity c:\\Users\\IEUser\\.ssh\\id_rsa ssh://vagrant@" + $podman_ip + "/run/user/1000/podman/podman.sock"
