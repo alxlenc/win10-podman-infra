@@ -69,8 +69,8 @@ Vagrant.configure("2") do |config|
     end
     w10.vm.provision "shell", inline: "podman --remote info"
     w10.vm.provision "shell", inline: "choco upgrade all -y"
-    w10.vm.provision "shell", reboot: true
     w10.vm.provision "shell", inline: "choco install python --version=3.9.7 -y"
+    w10.vm.provision "shell", inline: "Restart-Computer"
 
   end
 
