@@ -61,6 +61,7 @@ Vagrant.configure("2") do |config|
     # Create share to mount on podman vm
     w10.vm.provision "shell", inline: "New-SmbShare -Name IEUser -Path 'C:\\Users\\IEUser\\' -FullAccess 'msedgewin10\\ieuser'"
     w10.vm.provision "file", source: ".vagrant/machines/f36/virtualbox/private_key", destination: "c:\\Users\\IEUser\\.ssh\\id_rsa"
+    w10.vm.provision "file", source: "scripts/windows/setup-dlabs-venv.ps1", destination: "c:\\Users\\IEUser\\setup_venv.ps1"
     w10.vm.provision "shell", path: "scripts/windows/install-podman.ps1"
 
 
